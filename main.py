@@ -1,0 +1,1 @@
+longitude, width = input('Введите долготу и широту: ').split()
