@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
 from PIL import Image
 import keyboard
+import requests
+import shutil
 
 
 class Ui_MainWindow(object):
@@ -19,6 +21,7 @@ class Ui_MainWindow(object):
             self.size = 17
         if self.size < 1:
             self.size = 1
+        self.get()
         self.fname = 'map.png'
         self.img = Image.open(self.fname)
         self.image = QLabel(self.centralwidget)
@@ -39,6 +42,12 @@ class Ui_MainWindow(object):
         self.scale = name
         #  if ... : ...
         #  изменение запроса карты
+
+    def get(self):
+        link = f'https://static-maps.yandex.ru/1.x/?ll=%7Bf%22%7Bself.longitude%7D,%7Bself.latitude%7D%22%7D&size=650,450&l=map&z=%7Bself.size%7D'
+        response = requests.get(link)
+        with open('map.png', 'wb') as file:
+            file.write(response.content)
 
 
 if __name__ == '__main__':
