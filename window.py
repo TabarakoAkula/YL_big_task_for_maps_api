@@ -13,6 +13,12 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.longitude, self.latitude = input('Введите долготу и широту: ').split()
+        self.size = int(input('Введите размер(1-17): '))
+        if self.size > 17:
+            self.size = 17
+        if self.size < 1:
+            self.size = 1
         self.fname = 'map.png'
         self.img = Image.open(self.fname)
         self.image = QLabel(self.centralwidget)
