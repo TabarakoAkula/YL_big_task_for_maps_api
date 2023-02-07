@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
         #  изменение запроса карты
 
     def get(self):
-        link = f'https://static-maps.yandex.ru/1.x/?ll=%7Bf%22%7Bself.longitude%7D,%7Bself.latitude%7D%22%7D&size=650,450&l=map&z=%7Bself.size%7D'
+        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l=map&z={self.size}'
         response = requests.get(link)
         with open('map.png', 'wb') as file:
             file.write(response.content)
