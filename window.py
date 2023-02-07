@@ -1,10 +1,7 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap
-from PIL import Image
 import keyboard
 import requests
-import shutil
 
 
 class Ui_MainWindow(object):
@@ -17,18 +14,13 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.longitude, self.latitude = input('Введите долготу и широту: ').split()
         self.size = int(input('Введите размер(1-17): '))
+        self.label = QLabel(self.centralwidget)
         if self.size > 17:
             self.size = 17
         if self.size < 1:
             self.size = 1
-        self.get()
-        self.fname = 'map.png'
-        self.img = Image.open(self.fname)
-        self.image = QLabel(self.centralwidget)
-        self.image.move(75, 75)
-        self.image.resize(650, 450)
-        self.pixmap = QPixmap(self.fname)
-        self.image.setPixmap(self.pixmap)
+        self.get(self.size)
+        self.label.move(75, 75)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         keyboard.on_press_key("UP", lambda _: self.change_value("up"))
@@ -40,14 +32,26 @@ class Ui_MainWindow(object):
 
     def change_value(self, name):
         self.scale = name
-        #  if ... : ...
-        #  изменение запроса карты
+        if self.scale == 'up':
+            self.size += 1
+        else:
+            self.size -= 1
+        if self.size > 17:
+            self.size = 17
+        if self.size < 1:
+            self.size = 1
+        self.get(self.size)
 
-    def get(self):
-        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l=map&z={self.size}'
+    def get(self, size):
+        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l=map&z={size}'
         response = requests.get(link)
         with open('map.png', 'wb') as file:
             file.write(response.content)
+        pixmap = QtGui.QPixmap('map.png')
+        if not pixmap.isNull():
+            self.label.setPixmap(pixmap)
+            self.label.adjustSize()
+            self.label.resize(pixmap.size())
 
 
 if __name__ == '__main__':
