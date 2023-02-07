@@ -23,8 +23,8 @@ class Ui_MainWindow(object):
         self.label.move(75, 75)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        keyboard.on_press_key("UP", lambda _: self.change_value("up"))
-        keyboard.on_press_key("DOWN", lambda _: self.change_value("down"))
+        keyboard.on_press_key("PgUp", lambda _: self.change_value("up"))
+        keyboard.on_press_key("PgDown", lambda _: self.change_value("down"))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
