@@ -49,8 +49,13 @@ class Ui_MainWindow(object):
 
     def change_coordinates(self, name):
         self.cor = name
-        self.del_longitude = 180 / self.size / 5
-        self.del_latitude = 360 / self.size / 5
+        if self.size >= 8:
+            self.del_longitude = 90 / self.size ** 2 / 30
+            self.del_latitude = 90 / self.size ** 2 / 30
+        else:
+            self.del_longitude = 90 / self.size / 10
+            self.del_latitude = 90 / self.size / 10
+        print(self.del_latitude, self.del_longitude)
         if name == 'Right':
             if float(self.longitude) + self.del_longitude <= 180:
                 self.longitude = str(float(self.longitude) + self.del_longitude)
