@@ -46,6 +46,9 @@ class Ui_MainWindow(object):
         keyboard.on_press_key("DOWN", lambda _: self.change_coordinates("Down"))
         keyboard.on_press_key("LEFT", lambda _: self.change_coordinates("Left"))
         keyboard.on_press_key("RIGHT", lambda _: self.change_coordinates("Right"))
+        self.pushbutton_hybrid.clicked.connect(lambda: self.change_map_type('skl'))
+        self.pushbutton_scheme.clicked.connect(lambda: self.change_map_type('map'))
+        self.pushbutton_satellite.clicked.connect(lambda: self.change_map_type('sat'))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -54,6 +57,10 @@ class Ui_MainWindow(object):
         self.pushbutton_satellite.setText(_translate("mainWindow", "Satellite"))
         self.pushbutton_hybrid.setText(_translate("mainWindow", "Hybrid"))
         self.search_button.setText(_translate('mainWindow', '🔍'))
+
+    def change_map_type(self, type_now):
+        self.type = type_now
+        self.get()
 
     def change_value(self, name):
         self.scale = name
