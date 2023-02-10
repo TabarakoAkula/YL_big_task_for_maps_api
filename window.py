@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QPushButton, QTextEdit
 import keyboard
 import requests
 
@@ -23,6 +23,21 @@ class Ui_MainWindow(object):
             self.size = 1
         self.get()
         self.label.move(75, 75)
+        self.pushbutton_scheme = QPushButton(self.centralwidget)
+        self.pushbutton_satellite = QPushButton(self.centralwidget)
+        self.pushbutton_hybrid = QPushButton(self.centralwidget)
+        self.pushbutton_scheme.move(75, 540)
+        self.pushbutton_satellite.move(340, 540)
+        self.pushbutton_hybrid.move(585, 540)
+        self.pushbutton_scheme.resize(140, 30)
+        self.pushbutton_satellite.resize(140, 30)
+        self.pushbutton_hybrid.resize(140, 30)
+        self.search_lineedit = QTextEdit(self.centralwidget)
+        self.search_lineedit.resize(605, 30)
+        self.search_lineedit.move(75, 30)
+        self.search_button = QPushButton(self.centralwidget)
+        self.search_button.move(687, 30)
+        self.search_button.resize(35, 32)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         keyboard.on_press_key("PgUp", lambda _: self.change_value("up"))
@@ -35,6 +50,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MapViewer"))
+        self.pushbutton_scheme.setText(_translate("mainWindow", "Scheme"))
+        self.pushbutton_satellite.setText(_translate("mainWindow", "Satellite"))
+        self.pushbutton_hybrid.setText(_translate("mainWindow", "Hybrid"))
+        self.search_button.setText(_translate('mainWindow', '🔍'))
 
     def change_value(self, name):
         self.scale = name
