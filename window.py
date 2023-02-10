@@ -16,6 +16,7 @@ class Ui_MainWindow(object):
         self.longitude, self.latitude = input('Введите долготу и широту: ').split()
         self.size = int(input('Введите размер(1-17): '))
         self.label = QLabel(self.centralwidget)
+        self.type = 'map'
         if self.size > 17:
             self.size = 17
         if self.size < 1:
@@ -55,7 +56,6 @@ class Ui_MainWindow(object):
         else:
             self.del_longitude = 90 / self.size / 10
             self.del_latitude = 90 / self.size / 10
-        print(self.del_latitude, self.del_longitude)
         if name == 'Right':
             if float(self.longitude) + self.del_longitude <= 180:
                 self.longitude = str(float(self.longitude) + self.del_longitude)
@@ -70,9 +70,8 @@ class Ui_MainWindow(object):
                 self.latitude = str(float(self.latitude) + self.del_latitude)
         self.get()
 
-
     def get(self):
-        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l=map&z={self.size}'
+        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}'
         response = requests.get(link)
         with open('map.png', 'wb') as file:
             file.write(response.content)
