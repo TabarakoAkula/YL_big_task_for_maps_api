@@ -59,7 +59,10 @@ class Ui_MainWindow(object):
         self.search_button.setText(_translate('mainWindow', '🔍'))
 
     def change_map_type(self, type_now):
-        self.type = type_now
+        if type_now != 'skl':
+            self.type = type_now
+        else:
+            self.type = 'map,sat,skl'
         self.get()
 
     def change_value(self, name):
