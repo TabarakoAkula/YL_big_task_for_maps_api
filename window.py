@@ -36,11 +36,14 @@ class Ui_MainWindow(object):
         self.pushbutton_satellite.resize(140, 30)
         self.pushbutton_hybrid.resize(140, 30)
         self.search_lineedit = QLineEdit(self.centralwidget)
-        self.search_lineedit.resize(605, 30)
+        self.search_lineedit.resize(570, 30)
         self.search_lineedit.move(75, 30)
         self.search_button = QPushButton(self.centralwidget)
-        self.search_button.move(687, 30)
+        self.search_button.move(652, 30)
         self.search_button.resize(35, 32)
+        self.clear_button = QPushButton(self.centralwidget)
+        self.clear_button.move(689, 30)
+        self.clear_button.resize(35, 32)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         keyboard.on_press_key("PgUp", lambda _: self.change_value("up"))
@@ -61,6 +64,7 @@ class Ui_MainWindow(object):
         self.pushbutton_satellite.setText(_translate("mainWindow", "Satellite"))
         self.pushbutton_hybrid.setText(_translate("mainWindow", "Hybrid"))
         self.search_button.setText(_translate('mainWindow', '🔍'))
+        self.clear_button.setText(_translate('mainWindow', '❌'))
 
     def change_map_type(self, type_now):
         if type_now != 'skl':
@@ -121,26 +125,27 @@ class Ui_MainWindow(object):
     def find_object(self):
         self.Status = True
         self.name_to_find = self.search_lineedit.text()
-        self.geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
-        api_key = "40d1649f-0493-4b70-98ba-98533de7710b"
-        self.geocoder_params = {
-            "apikey": api_key,
-            "geocode": self.name_to_find,
-            "format": "json"}
-        self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
-        self.json_response = self.response.json()
-        if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"][
-            'found'] == '0':
-            self.Status = False
-        else:
-            self.toponym = self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
-            self.toponym_coodrinates = self.toponym["Point"]["pos"]
-            self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
-            self.longitude = self.toponym_longitude
-            self.latitude = self.toponym_lattitude
-            self.longitude_point = self.toponym_longitude
-            self.latitude_point = self.toponym_lattitude
-            self.get()
+        if self.name_to_find:
+            self.geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
+            api_key = "40d1649f-0493-4b70-98ba-98533de7710b"
+            self.geocoder_params = {
+                "apikey": api_key,
+                "geocode": self.name_to_find,
+                "format": "json"}
+            self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
+            self.json_response = self.response.json()
+            if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"][
+                'found'] == '0':
+                self.Status = False
+            else:
+                self.toponym = self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+                self.toponym_coodrinates = self.toponym["Point"]["pos"]
+                self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
+                self.longitude = self.toponym_longitude
+                self.latitude = self.toponym_lattitude
+                self.longitude_point = self.toponym_longitude
+                self.latitude_point = self.toponym_lattitude
+                self.get()
 
 
 if __name__ == '__main__':
