@@ -128,18 +128,15 @@ class Ui_MainWindow(object):
             "geocode": self.name_to_find,
             "format": "json"}
         self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
-        if not self.response:
+        self.json_response = self.response.json()
+        if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"]['found'] == '0':
             self.Status = False
-            print(1)
-            pass
         else:
-            self.json_response = self.response.json()
             self.toponym = self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             self.toponym_coodrinates = self.toponym["Point"]["pos"]
             self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
             self.longitude = self.toponym_longitude
             self.latitude = self.toponym_lattitude
-            print(2)
             self.get()
 
 
