@@ -56,6 +56,7 @@ class Ui_MainWindow(object):
         self.pushbutton_scheme.clicked.connect(lambda: self.change_map_type('map'))
         self.pushbutton_satellite.clicked.connect(lambda: self.change_map_type('sat'))
         self.search_button.clicked.connect(lambda: self.find_object())
+        self.clear_button.clicked.connect(lambda: self.clear_search())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -146,6 +147,12 @@ class Ui_MainWindow(object):
                 self.longitude_point = self.toponym_longitude
                 self.latitude_point = self.toponym_lattitude
                 self.get()
+
+
+    def clear_search(self):
+        self.Status = False
+        self.search_lineedit.setText('')
+        self.get()
 
 
 if __name__ == '__main__':
