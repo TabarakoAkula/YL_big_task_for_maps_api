@@ -115,6 +115,7 @@ class Ui_MainWindow(object):
             self.label.setPixmap(pixmap)
             self.label.adjustSize()
             self.label.resize(pixmap.size())
+        self.Status = False
 
 
     def find_object(self):
@@ -128,15 +129,18 @@ class Ui_MainWindow(object):
             "format": "json"}
         self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
         if not self.response:
+            self.Status = False
+            print(1)
             pass
-        self.json_response = self.response.json()
-        self.toponym = self.json_response["response"]["GeoObjectCollection"][
-            "featureMember"][0]["GeoObject"]
-        self.toponym_coodrinates = self.toponym["Point"]["pos"]
-        self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
-        self.longitude = self.toponym_longitude
-        self.latitude = self.toponym_lattitude
-        self.get()
+        else:
+            self.json_response = self.response.json()
+            self.toponym = self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+            self.toponym_coodrinates = self.toponym["Point"]["pos"]
+            self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
+            self.longitude = self.toponym_longitude
+            self.latitude = self.toponym_lattitude
+            print(2)
+            self.get()
 
 
 if __name__ == '__main__':
