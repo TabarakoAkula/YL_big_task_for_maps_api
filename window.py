@@ -11,6 +11,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+        self.Status = False
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.longitude, self.latitude = input('Введите долготу и широту: ').split()
@@ -102,7 +103,11 @@ class Ui_MainWindow(object):
 
     def get(self):
         link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}'
-        response = requests.get(link)
+        link_for_search = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}&pt={self.longitude},{self.latitude},pm2ntm'
+        if self.Status:
+            response = requests.get(link_for_search)
+        else:
+            response = requests.get(link)
         with open('map.png', 'wb') as file:
             file.write(response.content)
         pixmap = QtGui.QPixmap('map.png')
