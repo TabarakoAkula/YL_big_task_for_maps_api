@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QLabel, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QLabel, QPushButton, QLineEdit, QTextEdit
 import keyboard
 import requests
 
@@ -10,7 +10,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1100, 600)
         self.Status = False
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -44,6 +44,10 @@ class Ui_MainWindow(object):
         self.clear_button = QPushButton(self.centralwidget)
         self.clear_button.move(689, 30)
         self.clear_button.resize(35, 32)
+        self.address_text = QTextEdit(self.centralwidget)
+        self.address_text.move(740, 75)
+        self.address_text.resize(340, 450)
+        self.address_text.setReadOnly(True)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         keyboard.on_press_key("PgUp", lambda _: self.change_value("up"))
@@ -109,8 +113,11 @@ class Ui_MainWindow(object):
         self.get()
 
     def get(self):
-        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}'
-        link_for_search = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}&pt={self.longitude_point},{self.latitude_point},pm2ntm'
+        link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,' \
+               f'450&l={self.type}&z={self.size}'
+        link_for_search = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},' \
+                          f'{self.latitude}&size=650,450&l={self.type}&z={self.size}&' \
+                          f'pt={self.longitude_point},{self.latitude_point},pm2ntm'
         if self.Status:
             response = requests.get(link_for_search)
         else:
@@ -135,6 +142,13 @@ class Ui_MainWindow(object):
                 "format": "json"}
             self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
             self.json_response = self.response.json()
+            self.info = \
+                self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"][
+                    "metaDataProperty"][
+                    "GeocoderMetaData"]["Address"]["Components"]
+            self.text = ''
+            for i in self.info:
+                self.address_text.setText(self.address_text.toPlainText() + i['kind'] + ": " + i['name'] + '\n\n')
             if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"][
                 'found'] == '0':
                 self.Status = False
@@ -148,10 +162,10 @@ class Ui_MainWindow(object):
                 self.latitude_point = self.toponym_lattitude
                 self.get()
 
-
     def clear_search(self):
         self.Status = False
         self.search_lineedit.setText('')
+        self.address_text.clear()
         self.get()
 
 
