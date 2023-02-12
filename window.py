@@ -18,6 +18,8 @@ class Ui_MainWindow(object):
         self.size = int(input('Введите размер(1-17): '))
         self.label = QLabel(self.centralwidget)
         self.type = 'map'
+        self.longitude_point = 0
+        self.latitude_point = 0
         if self.size > 17:
             self.size = 17
         if self.size < 1:
@@ -103,7 +105,7 @@ class Ui_MainWindow(object):
 
     def get(self):
         link = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}'
-        link_for_search = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}&pt={self.longitude},{self.latitude},pm2ntm'
+        link_for_search = f'https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&size=650,450&l={self.type}&z={self.size}&pt={self.longitude_point},{self.latitude_point},pm2ntm'
         if self.Status:
             response = requests.get(link_for_search)
         else:
@@ -115,8 +117,6 @@ class Ui_MainWindow(object):
             self.label.setPixmap(pixmap)
             self.label.adjustSize()
             self.label.resize(pixmap.size())
-        self.Status = False
-
 
     def find_object(self):
         self.Status = True
@@ -129,7 +129,8 @@ class Ui_MainWindow(object):
             "format": "json"}
         self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
         self.json_response = self.response.json()
-        if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"]['found'] == '0':
+        if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"][
+            'found'] == '0':
             self.Status = False
         else:
             self.toponym = self.json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
@@ -137,11 +138,14 @@ class Ui_MainWindow(object):
             self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
             self.longitude = self.toponym_longitude
             self.latitude = self.toponym_lattitude
+            self.longitude_point = self.toponym_longitude
+            self.latitude_point = self.toponym_lattitude
             self.get()
 
 
 if __name__ == '__main__':
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QWidget()
     ui = Ui_MainWindow()
