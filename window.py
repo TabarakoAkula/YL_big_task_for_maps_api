@@ -18,6 +18,7 @@ class Ui_MainWindow(object):
         self.size = int(input('Введите размер(1-17): '))
         self.label = QLabel(self.centralwidget)
         self.type = 'map'
+        self.index_bool = True
         self.longitude_point = 0
         self.latitude_point = 0
         if self.size > 17:
@@ -48,6 +49,9 @@ class Ui_MainWindow(object):
         self.address_text.move(740, 75)
         self.address_text.resize(340, 450)
         self.address_text.setReadOnly(True)
+        self.pushbutton_index = QPushButton(self.centralwidget)
+        self.pushbutton_index.move(740, 540)
+        self.pushbutton_index.resize(340, 30)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         keyboard.on_press_key("PgUp", lambda _: self.change_value("up"))
@@ -60,7 +64,7 @@ class Ui_MainWindow(object):
         self.pushbutton_scheme.clicked.connect(lambda: self.change_map_type('map'))
         self.pushbutton_satellite.clicked.connect(lambda: self.change_map_type('sat'))
         self.search_button.clicked.connect(lambda: self.find_object())
-        self.clear_button.clicked.connect(lambda: self.clear_search())
+        self.pushbutton_index.clicked.connect(lambda: self.set_index())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -70,6 +74,7 @@ class Ui_MainWindow(object):
         self.pushbutton_hybrid.setText(_translate("mainWindow", "Hybrid"))
         self.search_button.setText(_translate('mainWindow', '🔍'))
         self.clear_button.setText(_translate('mainWindow', '❌'))
+        self.pushbutton_index.setText(_translate('mainWindow', f'Index: {self.index_bool}'))
 
     def change_map_type(self, type_now):
         if type_now != 'skl':
@@ -77,6 +82,14 @@ class Ui_MainWindow(object):
         else:
             self.type = 'map,sat,skl'
         self.get()
+
+    def set_index(self):
+        if self.index_bool:
+            self.index_bool = False
+        else:
+            self.index_bool = True
+        self.pushbutton_index.setText(f'Index: {self.index_bool}')
+        self.find_object()
 
     def change_value(self, name):
         self.scale = name
@@ -131,6 +144,7 @@ class Ui_MainWindow(object):
             self.label.resize(pixmap.size())
 
     def find_object(self):
+        self.address_text.clear()
         self.Status = True
         self.name_to_find = self.search_lineedit.text()
         if self.name_to_find:
@@ -149,6 +163,11 @@ class Ui_MainWindow(object):
             self.text = ''
             for i in self.info:
                 self.address_text.setText(self.address_text.toPlainText() + i['kind'] + ": " + i['name'] + '\n\n')
+            if self.index_bool:
+                self.address_text.setText(self.address_text.toPlainText() + 'postalcode: ' +
+                                          self.json_response["response"]["GeoObjectCollection"]["featureMember"][0][
+                                              "GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["Address"][
+                                              "postal_code"])
             if self.json_response['response']["GeoObjectCollection"]["metaDataProperty"]["GeocoderResponseMetaData"][
                 'found'] == '0':
                 self.Status = False
