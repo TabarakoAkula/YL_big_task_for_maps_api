@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QLabel, QPushButton, QTextEdit
+from PyQt5.QtWidgets import QLabel, QPushButton, QLineEdit
 import keyboard
 import requests
 
@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
         self.pushbutton_scheme.resize(140, 30)
         self.pushbutton_satellite.resize(140, 30)
         self.pushbutton_hybrid.resize(140, 30)
-        self.search_lineedit = QTextEdit(self.centralwidget)
+        self.search_lineedit = QLineEdit(self.centralwidget)
         self.search_lineedit.resize(605, 30)
         self.search_lineedit.move(75, 30)
         self.search_button = QPushButton(self.centralwidget)
@@ -49,6 +49,7 @@ class Ui_MainWindow(object):
         self.pushbutton_hybrid.clicked.connect(lambda: self.change_map_type('skl'))
         self.pushbutton_scheme.clicked.connect(lambda: self.change_map_type('map'))
         self.pushbutton_satellite.clicked.connect(lambda: self.change_map_type('sat'))
+        self.search_button.clicked.connect(lambda: self.find_object())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -111,9 +112,30 @@ class Ui_MainWindow(object):
             self.label.resize(pixmap.size())
 
 
+    def find_object(self):
+        self.Status = True
+        self.name_to_find = self.search_lineedit.text()
+        self.geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
+        api_key = "40d1649f-0493-4b70-98ba-98533de7710b"
+        self.geocoder_params = {
+            "apikey": api_key,
+            "geocode": self.name_to_find,
+            "format": "json"}
+        self.response = requests.get(self.geocoder_api_server, params=self.geocoder_params)
+        if not self.response:
+            pass
+        self.json_response = self.response.json()
+        self.toponym = self.json_response["response"]["GeoObjectCollection"][
+            "featureMember"][0]["GeoObject"]
+        self.toponym_coodrinates = self.toponym["Point"]["pos"]
+        self.toponym_longitude, self.toponym_lattitude = self.toponym_coodrinates.split(" ")
+        self.longitude = self.toponym_longitude
+        self.latitude = self.toponym_lattitude
+        self.get()
+
+
 if __name__ == '__main__':
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QWidget()
     ui = Ui_MainWindow()
