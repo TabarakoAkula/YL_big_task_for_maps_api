@@ -65,6 +65,7 @@ class Ui_MainWindow(object):
         self.pushbutton_satellite.clicked.connect(lambda: self.change_map_type('sat'))
         self.search_button.clicked.connect(lambda: self.find_object())
         self.pushbutton_index.clicked.connect(lambda: self.set_index())
+        self.clear_button.clicked.connect(lambda: self.clear_search())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
